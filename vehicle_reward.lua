@@ -5,6 +5,13 @@ local VEHICLE_REWARD_DATA = 129 -- 3A ? 40 ? 5D ? ? ? 2A +1
 
 local should_run_script = false
 
+-- It's actually possible to save blacklisted vehicles as PV, but doing so requires patching a lot of scripts, and once the patches are disabled, the game will instantly delete these vehicles anyway, so it's not worth it.
+local function IS_VEHICLE_VALID_FOR_PV(vehicle_hash)
+    return scr_function.call_script_function("freemode", 0x8AD5E, "bool", {
+        { "int", vehicle_hash }
+    })
+end
+
 local function GIVE_VEHICLE_REWARD(vehicle_id, data, transaction, garage, slot, state)
     return scr_function.call_script_function("am_mp_vehicle_reward", "GVR", "2D 0C 1E 00 00", "bool", {
         { "int", vehicle_id },
@@ -58,9 +65,13 @@ end)
 
 vehicle_tab:add_button("Claim Current Vehicle as PV", function()
     script.run_in_fiber(function()
-        if script.is_active("am_mp_vehicle_reward") then
+        if network.is_session_started() and script.is_active("freemode") and script.is_active("am_mp_vehicle_reward") then
             if PED.IS_PED_IN_ANY_VEHICLE(self.get_ped(), false) then
-                should_run_script = true
+                if IS_VEHICLE_VALID_FOR_PV(ENTITY.GET_ENTITY_MODEL(self.get_veh())) then
+                    should_run_script = true
+                else
+                    gui.show_error("Vehicle Reward", "This vehicle cannot be saved as a personal vehicle.")
+                end
             else
                 gui.show_error("Vehicle Reward", "Please get in a vehicle.")
             end
