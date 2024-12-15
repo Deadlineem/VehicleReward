@@ -107,4 +107,4 @@ vehicle_tab:add_button("Claim Current Vehicle as PV", function()
         end
     end)
 end)
-toolTip("vehicle_tab", "Allows you to claim the vehicle you are inside of as a Personal Vehicle and sends it to the garage of your choice.")
+toolTip(vehicle_tab, "Allows you to claim the vehicle you are inside of as a Personal Vehicle and sends it to the garage of your choice.")
