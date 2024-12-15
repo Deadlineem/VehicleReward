@@ -1,3 +1,30 @@
+function toolTip(tab, text, seperate)
+    seperate = seperate or false
+    if tab == "" then
+        if seperate then --waiting approval
+            ImGui.SameLine()
+            ImGui.TextDisabled("(?)")
+        end
+        if ImGui.IsItemHovered() then
+            ImGui.BeginTooltip()
+      ImGui.Text(text)
+            ImGui.EndTooltip()
+        end
+    else
+        tab:add_imgui(function()
+            if seperate then
+                ImGui.SameLine()
+                ImGui.TextDisabled("(?)")
+            end
+            if ImGui.IsItemHovered() then
+                ImGui.BeginTooltip()
+                ImGui.Text(text)
+                ImGui.EndTooltip()
+            end
+        end)
+    end
+end
+
 local vehicle_tab = gui.get_tab("GUI_TAB_VEHICLE")
 
 local GARAGE_MENU_DATA    = 176 -- 3A ? 42 ? 71 3A ? 42 ? 71 3A ? 42 ? 71 3A ? 42 ? 71 3A ? 42 ? 71 71 +1
@@ -80,3 +107,4 @@ vehicle_tab:add_button("Claim Current Vehicle as PV", function()
         end
     end)
 end)
+toolTip("vehicle_tab", "Allows you to claim the vehicle you are inside of as a Personal Vehicle and sends it to the garage of your choice.")
